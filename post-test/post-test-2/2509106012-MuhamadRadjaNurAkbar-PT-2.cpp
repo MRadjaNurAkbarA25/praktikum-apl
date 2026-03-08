@@ -31,7 +31,8 @@ int main() {
     int jumlahPenduduk = 2;
     int jumlahUser = 2;
     int jumlahSurat = 2;
-    int totalSurat = 0;
+    int totalSurat = 2;
+    int totalPenduduk = 2;
     int indexUser = -1;
     int pilihan;
 
@@ -64,12 +65,13 @@ int main() {
                 string roleUser = "";
                 bool loginSukses = false;
 
+                cin.ignore();
                 while (kesempatan > 0 && !loginSukses) {
                     cout << "Silahkan login untuk melanjutkan\n";
-                    cout << "Username: "; 
-                    cin >> username;
-                    cout << "Password: "; 
-                    cin >> password;
+                    cout << "Username: ";
+                    getline(cin, username);
+                    cout << "Password: ";
+                    getline(cin, password);
                     bool ditemukan = false;
 
                     for (int i = 0; i < jumlahUser; i++) {
@@ -180,7 +182,7 @@ int main() {
                                             cout << "Nomor telepon sudah digunakan!\n";
                                             break;
                                         }
-                                        string nikBaru = "PDK" + to_string(jumlahPenduduk + 1);
+                                        string nikBaru = "PDK" + to_string(++totalPenduduk);
                                         dataPenduduk[jumlahPenduduk] = {nikBaru, namaBaru, alamatBaru, noTelpBaru};
                                         jumlahPenduduk++;
                                         cout << "Berhasil ditambahkan!";
@@ -217,7 +219,7 @@ int main() {
                                             cin.clear();
                                             cin.ignore(100, '\n');
                                             cout << "Input tidak valid!\n\n";
-                                            continue;
+                                            break;
                                         }
                                         switch (pilihan) {
                                             case 1 : {
@@ -400,7 +402,7 @@ int main() {
                                             for (int i = 0; i < jumlahUser; i++) {
                                                 cout << i + 1 << ". " << "Username: " << dataUser[i].usr << ", " <<
                                                 "Role: " << dataUser[i].role << ", " << "NIK: " << dataUser[i].dataDiri.nik <<
-                                                ", " << "Nama: " << dataUser[i].dataDiri.nama;
+                                                ", " << "Nama: " << dataUser[i].dataDiri.nama << "\n";
                                             }
                                             break;
                                         }
@@ -443,6 +445,9 @@ int main() {
                                                 dataUser[i] = dataUser[i + 1];
                                             }
                                             jumlahUser--;
+                                            if (indexCari < indexUser) {
+                                                indexUser--;
+                                            }
                                             cout << "Berhasil dihapus!\n";
                                             break;
                                         }
@@ -502,7 +507,7 @@ int main() {
                                             }
 
                                             for (int i = 0; i < jumlahSurat; i++) {
-                                                cout << i + 1 << ". ID surat" << dataSurat[i].idSurat
+                                                cout << i + 1 << ". ID surat: " << dataSurat[i].idSurat
                                                 << ", NIK Pemohon: " << dataSurat[i].nikPemohon
                                                 << ", Jenis Surat: " << dataSurat[i].jenisSurat
                                                 << ", Keperluan: " << dataSurat[i].keperluan
@@ -544,7 +549,7 @@ int main() {
                                                 cin.clear();
                                                 cin.ignore(100, '\n');
                                                 cout << "Input tidak valid!\n\n";
-                                                continue;
+                                                break;
                                             }
 
                                             switch(pilihan) {
@@ -652,7 +657,294 @@ int main() {
                         } // switch menu admin
                         if (pilihan == 4) break; // keluar while menu admin
                     } // while menu admin
-                } // if admin
+                } else {
+                    while (true) {
+                        cout << "\nPilih menu: \n";
+                        cout << "1. Data sendiri\n";
+                        cout << "2. Ganti password\n";
+                        cout << "3. Surat menyurat\n";
+                        cout << "4. Log-out\n";
+                        cout << "Pilih: ";
+                        if (!(cin >> pilihan)) {
+                            cin.clear();
+                            cin.ignore(100, '\n');
+                            cout << "Input tidak valid!\n\n";
+                            continue;
+                        }
+                        switch (pilihan) {
+                            case 1: {
+                                cout << "Data diri kamu\n";
+                                cout << "NIK: " << dataUser[indexUser].dataDiri.nik << "\n";
+                                cout << "Nama: " << dataUser[indexUser].dataDiri.nama << "\n";
+                                cout << "Alamat: " << dataUser[indexUser].dataDiri.alamat << "\n";
+                                cout << "Nomor Telepon: " << dataUser[indexUser].dataDiri.noTelp << "\n";
+                                break;
+                            }
+                            case 2: {
+                                string passwordTempo, gantiPassword, konfirmasi;
+                                cout << "Masukkan password sekarang untuk mengganti password: \n";
+                                cin.ignore();
+                                getline(cin, passwordTempo);
+                                if (passwordTempo == "") {
+                                    cout << "Tidak boleh kosong!\n";
+                                    break;
+                                }
+                                if (dataUser[indexUser].pw == passwordTempo) {
+                                    cout << "Masukkan password baru: ";
+                                    getline(cin, gantiPassword);
+                                    if (gantiPassword.length() < 3) {
+                                        cout << "Panjang password minimal 3 karakter!\n";
+                                        break;
+                                    }
+                                    cout << "Konfirmasi password baru: ";
+                                    getline(cin, konfirmasi);
+                                    if (gantiPassword == konfirmasi) {
+                                        dataUser[indexUser].pw = gantiPassword;
+                                        cout << "Password berhasil diubah!\n"; 
+                                        break;
+                                    } else {
+                                        cout << "Password salah!\n";
+                                        break;
+                                    }
+                                } else {
+                                    cout << "Password salah!\n";
+                                    break;
+                                }
+                            }
+                            case 3: {
+                                string daftarJenis[] {
+                                    "Surat Keterangan Domisili",
+                                    "Surat Keterangan Tidak Mampu",
+                                    "Surat Pengantar KTP",
+                                    "Surat Keterangan Kelahiran"
+                                };
+
+                                string daftarKeperluan[] {
+                                    "Melamar pekerjaan",
+                                    "Keperluan pendidikan",
+                                    "Keperluan pernikahan",
+                                    "Lainnya"
+                                };
+
+                                string daftarStatus[] {
+                                    "menunggu",
+                                    "diproses",
+                                    "selesai",
+                                    "ditolak"
+                                };
+
+                                while (true) {
+                                cout << "Pilih menu: \n";
+                                cout << "1. Liat surat sendiri\n";
+                                cout << "2. Buat surat\n";
+                                cout << "3. Edit surat\n";
+                                cout << "4. Hapus surat\n";
+                                cout << "5. Kembali\n";
+                                cout << "Pilih: ";
+                                if (!(cin >> pilihan)) {
+                                    cin.clear();
+                                    cin.ignore(100, '\n');
+                                    cout << "Input tidak valid!\n\n";
+                                    continue;
+                                }
+                                switch(pilihan) {
+                                    case 1: {
+                                        bool adaSurat = false;
+                                        for (int i = 0; i < jumlahSurat; i++) {
+                                            if (dataSurat[i].nikPemohon == dataUser[indexUser].dataDiri.nik) {
+                                                if (!adaSurat) {
+                                                    cout << "Daftar surat: \n";
+                                                    adaSurat = true;
+                                                }
+                                                cout << i + 1 << ". ID: " << dataSurat[i].idSurat
+                                                << ", Jenis: " << dataSurat[i].jenisSurat
+                                                << ", Keperluan: " << dataSurat[i].keperluan
+                                                << ", Status: " << dataSurat[i].status
+                                                << ", Keterangan: " << dataSurat[i].keterangan << "\n";
+                                            }
+                                        }
+                                        if (!adaSurat) {
+                                            cout << "Kamu belum punya surat!";
+                                        }
+                                        break;
+                                    }
+                                    case 2: {
+                                        if (jumlahSurat >= 100) {
+                                            cout << "Database penuh! Tidak bisa tambah surat!\n";
+                                            break;
+                                        }
+                                        cout << "Buat surat: ";
+                                        int pilihJenis, pilihKeperluan;
+                                        string jenisBaru, keperluanBaru;
+                                        cout << "Pilih jenis: \n";
+                                        for (int i = 0; i < 4; i++) {
+                                            cout << i + 1 << ". " << daftarJenis[i] << "\n";
+                                        }
+                                        cout << "Pilih: ";
+                                        cin >> pilihJenis;
+                                        if (pilihJenis < 1 || pilihJenis > 4) {
+                                            cout << "Pilihan tidak valid!\n";
+                                            break;
+                                        }
+                                        jenisBaru = daftarJenis[pilihJenis-1];
+
+                                        cout << "Pilih keperluan: \n";
+                                        for (int i = 0; i < 4; i++) {
+                                            cout << i + 1 << ". " << daftarKeperluan[i] << "\n";
+                                        }
+                                        cout << "Pilih: ";
+                                        cin >> pilihKeperluan;
+                                        if (pilihKeperluan < 1 || pilihKeperluan > 4) {
+                                            cout << "Pilihan tidak valid!\n";
+                                            break;
+                                        }
+                                        keperluanBaru = daftarKeperluan[pilihKeperluan-1];
+                                        string nikPemohonSementara = dataUser[indexUser].dataDiri.nik;
+                                        string idBaru = "SRT" + to_string(++totalSurat);
+                                        dataSurat[jumlahSurat] = {idBaru, nikPemohonSementara, jenisBaru, keperluanBaru, "menunggu", "-"};
+                                        jumlahSurat++;
+                                        cout << "Surat berhasil ditambahkan!\n";
+                                        break;
+                                    }
+                                    case 3: {
+                                        string cariID;
+                                        cout << "Masukkan ID surat yang ingin diubah: \n";
+                                        cin.ignore();
+                                        getline(cin, cariID);
+
+                                        int indexCari = -1;
+                                        for (int i = 0; i < jumlahSurat; i++) {
+                                            if (dataSurat[i].idSurat == cariID && 
+                                            dataSurat[i].nikPemohon == dataUser[indexUser].dataDiri.nik) {
+                                                indexCari = i;
+                                                break;
+                                            }
+                                        }
+                                        if (indexCari == -1) {
+                                            cout << "Surat tidak ditemukan!\n";
+                                            break;
+                                        }
+                                        if (dataSurat[indexCari].status != "menunggu") {
+                                            cout << "Surat tidak bisa diedit!";
+                                            break;
+                                        }
+
+                                        cout << "Pilih yang ingin diubah: \n";
+                                        cout << "1. Jenis surat\n";
+                                        cout << "2. Keperluan surat\n";
+                                        cout << "3. Kembali\n";
+                                        cout << "Pilih: ";
+                                        if (!(cin >> pilihan)) {
+                                            cin.clear();
+                                            cin.ignore(100, '\n');
+                                            cout << "Input tidak valid!\n\n";
+                                            break;
+                                        }
+                                        switch(pilihan) {
+                                            case 1: {
+                                                int gantiJenis;
+                                                cout << "Pilih jenis: \n";
+                                                for (int i = 0; i < 4; i++) {
+                                                    cout << i + 1 << ". " << daftarJenis[i] << "\n";
+                                                }
+                                                cout << "Pilih: ";
+                                                cin >> gantiJenis;
+                                                if (gantiJenis < 1 || gantiJenis > 4) {
+                                                    cout << "Pilihan tidak valid!\n";
+                                                    break;
+                                                }
+                                                dataSurat[indexCari].jenisSurat = daftarJenis[gantiJenis-1];
+                                                cout << "Jenis surat berhasil diubah!\n";
+                                                break;
+                                            }
+                                            case 2: {
+                                                int gantiKeperluan;
+                                                cout << "Pilih keperluan: \n";
+                                                for (int i = 0; i < 4; i++) {
+                                                    cout << i + 1 << ". " << daftarKeperluan[i] << "\n";
+                                                }
+                                                cout << "Pilih: ";
+                                                cin >> gantiKeperluan;
+                                                if (gantiKeperluan < 1 || gantiKeperluan > 4) {
+                                                    cout << "Pilihan tidak valid!\n";
+                                                    break;
+                                                }
+                                                dataSurat[indexCari].keperluan = daftarKeperluan[gantiKeperluan-1];
+                                                cout << "Keperluan surat berhasil diubah!\n";
+                                                break;
+                                            }
+                                            case 3: {
+                                                break;
+                                            }
+                                            default: {
+                                                cout << "Pilihan tidak valid!\n";
+                                                break;
+                                            }
+                                        } // switch edit surat
+                                        break; // break case 3 edit
+                                    }
+                                    case 4: {
+                                        string cariID;
+                                        cout << "Masukkan ID surat yang ingin dihapus: \n";
+                                        cin.ignore();
+                                        getline(cin, cariID);
+
+                                        int indexCari = -1;
+                                        for (int i = 0; i < jumlahSurat; i++) {
+                                            if (dataSurat[i].idSurat == cariID && 
+                                            dataSurat[i].nikPemohon == dataUser[indexUser].dataDiri.nik) {
+                                                indexCari = i;
+                                                break;
+                                            }
+                                        }
+                                        if (indexCari == -1) {
+                                            cout << "Surat tidak ditemukan!\n";
+                                            break;
+                                        }
+                                        if (dataSurat[indexCari].status != "menunggu") {
+                                            cout << "Surat tidak bisa dihapus!\n";
+                                            break;
+                                        }
+                                        cout << "Yakin ingin hapus surat? (y/n): ";
+                                        char konfirmasi;
+                                        cin >> konfirmasi;
+                                        if (konfirmasi != 'y') {
+                                            cout << "Batal dihapus!";
+                                            break;
+                                        }
+                                        for (int i = indexCari; i < jumlahSurat - 1; i++) {
+                                            dataSurat[i] = dataSurat[i+1];
+                                        }
+                                        jumlahSurat--;
+                                        cout << "Surat berhasil dihapus!\n";
+                                        break;
+                                    }
+                                    case 5: {
+                                        break;
+                                    }
+                                    default: {
+                                        cout << "Pilihan tidak valid!\n";
+                                        break;
+                                    }
+                                } // switch menu surat user
+                                if (pilihan == 5) break;
+                                } // while menu surat user
+                                pilihan = 0;
+                                break; // break case 3 surat menyurat
+                            } // case 3 surat menyurat
+                            case 4: {
+                                cout << "Logout berhasil!\n";
+                                indexUser = -1;
+                                break;
+                            }
+                            default: {
+                                cout << "Pilihan tidak valid!\n";
+                                break;
+                            }
+                        } // switch menu user
+                        if (pilihan == 4) break; // keluar while menu user
+                    } // while menu user
+                } // else user
                 break;
             } // case 1
             case 2 : {
