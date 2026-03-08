@@ -3,18 +3,46 @@
 using namespace std;
 //using namespace tabulate;
 
+struct Penduduk {
+    string nik;
+    string nama;
+    string alamat;
+    string noTelp;
+};
+
 struct User {
     string usr;
     string pw;
     string role;
+    Penduduk dataDiri;
+};
+
+struct Surat {
+    string idSurat;
+    string nikPemohon;
+    string jenisSurat;
+    string keperluan;
+    string status;
+    string keterangan;
 };
 
 int main() {
-    User users[100];
+    Penduduk dataPenduduk[100];
+    User dataUser[100];
+    Surat dataSurat[100];
+    int jumlahPenduduk = 0;
     int jumlahUser = 2;
+    int jumlahSurat = 0;
+    int totalSurat = 0;
+    int indexUser = -1;
     int pilihan;
-    users[0] = {"r", "012", "admin"};
-    users[1] = {"a", "001", "user"}; 
+
+    dataPenduduk[0] = {"001", "radja", "gg bersatu", "08111"};
+    dataPenduduk[1] = {"002", "amat", "gg bersama", "08112"};
+    jumlahPenduduk = 2;
+
+    dataUser[0] = {"r", "012", "admin", dataPenduduk[0]};
+    dataUser[1] = {"a", "011", "user", dataPenduduk[1]}; 
 
     cout << "Selamat datang di Website Balai Kota!\n\n";
 
@@ -46,9 +74,10 @@ int main() {
                     bool ditemukan = false;
 
                     for (int i = 0; i < jumlahUser; i++) {
-                        if (username == users[i].usr && password == users[i].pw ) {
+                        if (username == dataUser[i].usr && password == dataUser[i].pw ) {
                             loginSukses = true;
-                            roleUser = users[i].role;
+                            roleUser = dataUser[i].role;
+                            indexUser = i;
                             ditemukan = true;
                             cout << "\nLogin berhasil! Selamat datang, " << username << "!\n\n";
                             break;
@@ -72,7 +101,7 @@ int main() {
                     cout << "Database penuh! tidak bisa register";
                     break;
                 }
-                string usernameBaru, passwordBaru;
+                string usernameBaru, passwordBaru, namaCari;
                 cout << "Masukkan username baru: ";
                 cin.ignore();
                 getline(cin, usernameBaru);
@@ -82,7 +111,7 @@ int main() {
                 }
                 bool available = false;
                 for (int i = 0; i < jumlahUser; i++) {
-                    if (usernameBaru == users[i].usr) {
+                    if (usernameBaru == dataUser[i].usr) {
                         available = true;
                         break;
                     }
@@ -97,9 +126,53 @@ int main() {
                     cout << "Panjang password minimal 3 karakter!\n";
                     break;
                 }
-                users[jumlahUser] = {usernameBaru, passwordBaru, "user"};
+                cout << "Masukkan nama lengkap: ";
+                getline(cin, namaCari);
+
+                int hasilCari[100];
+                int jumlahHasil = 0;
+                for (int i = 0; i < jumlahPenduduk; i++) {
+                    if (dataPenduduk[i].nama == namaCari) {
+                        bool punyaAkun = false;
+                        for (int j = 0; j < jumlahUser; j++) {
+                            if (dataUser[j].dataDiri.nik == dataPenduduk[i].nik) {
+                                punyaAkun = true;
+                                break;
+                            }
+                        }
+                        if (!punyaAkun) {
+                            hasilCari[jumlahHasil] = i;
+                            jumlahHasil++;
+                        }
+                    }
+                }
+                if (jumlahHasil == 0) {
+                    cout << "Nama tidak ditemukan atau nama sudah punya akun!";
+                    break;
+                }
+                int indexPenduduk = -1;
+                if (jumlahHasil == 1) {
+                    indexPenduduk = hasilCari[0];
+                } else {
+                    cout << "Ditemukan " << jumlahHasil << " penduduk dengan nama sama: \n";
+                    for (int i = 0; i < jumlahHasil; i++) {
+                        cout << i + 1 << ". " << dataPenduduk[hasilCari[i]].nama
+                        << " - " << dataPenduduk[hasilCari[i]].alamat << "\n";
+                    }
+                    int pilihPenduduk;
+                    cout << "Pilih nomor: ";
+                    cin >> pilihPenduduk;
+                    if (pilihPenduduk < 1 || pilihPenduduk > jumlahHasil) {
+                        cout << "Pilihan tidak valid!\n";
+                        break;
+                    }
+                    indexPenduduk = hasilCari[pilihPenduduk-1];
+                }
+
+                dataUser[jumlahUser] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
                 jumlahUser++;
                 cout << "Registrasi berhasil!\n";
+                cout << "Nik kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
                 break;
             } // case 2
             case 3 : {
