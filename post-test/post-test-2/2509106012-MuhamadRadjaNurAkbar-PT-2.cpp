@@ -378,13 +378,12 @@ int main() {
                                         cout << "Pilihan tidak valid!\n";
                                         break;
                                     }
-                                } // switch menu penduduk
-                                if (pilihan == 5) break; // keluar while menu penduduk
-                                } // while menu penduduk
+                                } 
+                                if (pilihan == 5) break; 
+                                } 
                                 break;
-                            } // case 1 data penduduk
+                            } 
                             case 2 : {
-                                // Data Akun (TODO)
                                 while (true) {
                                     cout << "\nPilih menu: \n";
                                     cout << "1. Lihat daftar akun\n";
@@ -594,9 +593,9 @@ int main() {
                                                     cout << "Pilihan tidak valid!\n";
                                                     break;
                                                 }
-                                            } // switch update surat
-                                            break; // break case 2 update
-                                        } // tutup case 2 update
+                                            } 
+                                            break; 
+                                        } 
                                         case 3 : {
                                             cin.ignore();
                                             string cariID;
@@ -638,12 +637,12 @@ int main() {
                                             cout << "Pilihan tidak valid!\n";
                                             break;
                                         }
-                                    } // switch menu surat
-                                    if (pilihan == 4) break; // keluar while surat
-                                } // while surat
+                                    } 
+                                    if (pilihan == 4) break; 
+                                } 
                                 pilihan = 0;
-                                break; // break case 3 menu admin
-                            } // case 3 menu admin
+                                break; 
+                            } 
                                 
                             case 4 : {
                                 cout << "Logout berhasil!\n";
@@ -654,9 +653,9 @@ int main() {
                                 cout << "Pilihan tidak valid!\n";
                                 break;
                             }
-                        } // switch menu admin
-                        if (pilihan == 4) break; // keluar while menu admin
-                    } // while menu admin
+                        } 
+                        if (pilihan == 4) break; 
+                    } 
                 } else {
                     while (true) {
                         cout << "\nPilih menu: \n";
@@ -880,8 +879,8 @@ int main() {
                                                 cout << "Pilihan tidak valid!\n";
                                                 break;
                                             }
-                                        } // switch edit surat
-                                        break; // break case 3 edit
+                                        } 
+                                        break; 
                                     }
                                     case 4: {
                                         string cariID;
@@ -926,12 +925,12 @@ int main() {
                                         cout << "Pilihan tidak valid!\n";
                                         break;
                                     }
-                                } // switch menu surat user
+                                } 
                                 if (pilihan == 5) break;
-                                } // while menu surat user
+                                } 
                                 pilihan = 0;
-                                break; // break case 3 surat menyurat
-                            } // case 3 surat menyurat
+                                break; 
+                            } 
                             case 4: {
                                 cout << "Logout berhasil!\n";
                                 indexUser = -1;
@@ -941,12 +940,12 @@ int main() {
                                 cout << "Pilihan tidak valid!\n";
                                 break;
                             }
-                        } // switch menu user
-                        if (pilihan == 4) break; // keluar while menu user
-                    } // while menu user
-                } // else user
+                        } 
+                        if (pilihan == 4) break; 
+                    } 
+                } 
                 break;
-            } // case 1
+            } 
             case 2 : {
                 if (jumlahUser >= 100) {
                     cout << "Database penuh! tidak bisa register";
@@ -1035,7 +1034,7 @@ int main() {
                 break;
             }
 
-        } // switch 1
+        } 
 
-    } // while menu 1
-} // main
+    } 
+} 
