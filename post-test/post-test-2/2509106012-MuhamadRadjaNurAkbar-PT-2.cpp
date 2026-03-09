@@ -1006,8 +1006,8 @@ int main() {
                 } else {
                     cout << "Ditemukan " << jumlahHasil << " penduduk dengan nama sama: \n";
                     for (int i = 0; i < jumlahHasil; i++) {
-                        cout << i + 1 << ". " << dataPenduduk[hasilCari[i]].nama
-                        << " - " << dataPenduduk[hasilCari[i]].alamat << "\n";
+                        cout << i + 1 << ". " << dataPenduduk[hasilCari[i]].nama << 
+                        " - " << dataPenduduk[hasilCari[i]].nik << "\n";
                     }
                     int pilihPenduduk;
                     cout << "Pilih nomor: ";
