@@ -327,9 +327,17 @@ int main() {
                                             break;
                                         }
 
-                                        if (dataPenduduk[indexCari].nik == dataUser[indexUser].dataDiri.nik) {
-                                        cout << "Tidak bisa menghapus penduduk yang sedang login!\n";
-                                        break;
+                                        bool adaAdmin = false;
+                                        for (int i = 0; i < jumlahUser; i++) {
+                                            if (dataUser[i].dataDiri.nik == dataPenduduk[indexCari].nik &&
+                                            dataUser[i].role == "admin") {
+                                                adaAdmin = true;
+                                                break;
+                                            }
+                                        }
+                                        if (adaAdmin) {
+                                            cout << "Tidak bisa hapus penduduk dengan akun admin!\n";
+                                            break;
                                         }
                                         cout << "NIK: " << dataPenduduk[indexCari].nik <<
                                             ", " << "Nama: " << dataPenduduk[indexCari].nama << ", " <<
