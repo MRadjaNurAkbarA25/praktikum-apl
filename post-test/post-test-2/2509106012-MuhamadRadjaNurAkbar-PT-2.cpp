@@ -97,7 +97,7 @@ int main() {
                 }
                 if (roleUser == "admin") {
                     while (true) {
-                        cout << "\nPilih menu: \n";
+                        cout << "\nPilih menu field: \n";
                         cout << "1. Data Penduduk\n";
                         cout << "2. Data akun\n";
                         cout << "3. Data surat\n";
@@ -112,7 +112,7 @@ int main() {
                         switch(pilihan) {
                             case 1 : {
                                 while (true) {
-                                cout << "\nPilih menu: \n";
+                                cout << "\nPilih menu penduduk: \n";
                                 cout << "1. Lihat daftar penduduk\n";
                                 cout << "2. Tambah penduduk\n";
                                 cout << "3. Edit data penduduk\n";
@@ -385,7 +385,7 @@ int main() {
                             } 
                             case 2 : {
                                 while (true) {
-                                    cout << "\nPilih menu: \n";
+                                    cout << "\nPilih menu akun: \n";
                                     cout << "1. Lihat daftar akun\n";
                                     cout << "2. Hapus akun\n";
                                     cout << "3. Kembali\n";
@@ -485,7 +485,7 @@ int main() {
                                 };
 
                                 while (true) {
-                                    cout << "Pilih menu: \n";
+                                    cout << "Pilih menu surat: \n";
                                     cout << "1. Lihat daftar surat\n";
                                     cout << "2. Update surat\n";
                                     cout << "3. Hapus surat\n";
@@ -733,7 +733,7 @@ int main() {
                                 };
 
                                 while (true) {
-                                cout << "Pilih menu: \n";
+                                cout << "Pilih menu surat: \n";
                                 cout << "1. Liat surat sendiri\n";
                                 cout << "2. Buat surat\n";
                                 cout << "3. Edit surat\n";
@@ -828,7 +828,7 @@ int main() {
                                             break;
                                         }
 
-                                        cout << "Pilih yang ingin diubah: \n";
+                                        cout << "Pilih perubahan: \n";
                                         cout << "1. Jenis surat\n";
                                         cout << "2. Keperluan surat\n";
                                         cout << "3. Kembali\n";
