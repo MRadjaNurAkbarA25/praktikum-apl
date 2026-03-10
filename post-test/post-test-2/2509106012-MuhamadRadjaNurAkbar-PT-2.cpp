@@ -269,6 +269,10 @@ int main() {
                                                 cout << "No telepon baru: ";
                                                 cin.ignore();
                                                 getline(cin, telpGanti);
+                                                if (telpGanti == "") {
+                                                    cout << "Tidak boleh kosong!";
+                                                    break;
+                                                }
 
                                                 bool valid = true;
                                                 for (int i = 0; i < telpGanti.length(); i++) {
