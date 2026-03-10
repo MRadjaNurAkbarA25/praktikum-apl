@@ -36,14 +36,15 @@ int main() {
     int indexUser = -1;
     int pilihan;
 
-    dataPenduduk[0] = {"PDK1", "radja", "gg bersatu", "08111"};
-    dataPenduduk[1] = {"PDK2", "amat", "gg bersama", "08112"};
+        dataPenduduk[0] = {"PDK1", "radja", "gg bersatu", "08111"};
+        dataPenduduk[1] = {"PDK2", "amat", "gg bersama", "08112"};
 
-    dataUser[0] = {"r", "012", "admin", dataPenduduk[0]};
-    dataUser[1] = {"a", "011", "user", dataPenduduk[1]}; 
+        dataUser[0] = {"r", "012", "admin", dataPenduduk[0]};
+        dataUser[1] = {"a", "011", "user", dataPenduduk[1]}; 
 
-    dataSurat[0] = {"SRT1", "PDK2", "Surat Keterangan Tidak Mampu", "Keperluan Pendidikan", "diproses", "Dalam pengecekkan"};
-    dataSurat[1] = {"SRT2", "PDK2", "Surat Keterangan Tidak Mampu", "Keperluan usaha", "menunggu", "-"};
+        dataSurat[0] = {"SRT1", "PDK2", "Surat Keterangan Tidak Mampu", "Keperluan Pendidikan", "diproses", 
+                        "Dalam pengecekkan"};
+        dataSurat[1] = {"SRT2", "PDK2", "Surat Keterangan Tidak Mampu", "Keperluan usaha", "menunggu", "-"};
 
     while (true) {
         cout << "Selamat datang di Website Balai Kota!\n\n";
@@ -159,7 +160,10 @@ int main() {
                                         }
                                         cout << "Masukkan nomor telepon: ";
                                         getline(cin, noTelpBaru);
-
+                                        if (noTelpBaru == "") {
+                                            cout << "Tidak boleh kosong!";
+                                            break;
+                                        }
                                         bool valid = true;
                                         for (int i = 0; i < noTelpBaru.length(); i++) {
                                             if (!isdigit(noTelpBaru[i])) {
@@ -431,9 +435,9 @@ int main() {
                                                 break;
                                             }
 
-                                            if (indexCari == indexUser) {
-                                            cout << "Tidak bisa menghapus akun yang sedang login!\n";
-                                            break;
+                                            if (dataUser[indexCari].role == "admin") {
+                                                cout << "Tidak bisa menghapus akun admin!\n";
+                                                break;
                                             }
                                             cout << "Username: " << dataUser[indexCari].usr
                                                 << ", Role: " << dataUser[indexCari].role
