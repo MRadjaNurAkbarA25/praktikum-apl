@@ -27,6 +27,7 @@ struct Surat {
     string keterangan;
 };
 
+
 void clear() {
     system("cls || clear");
 }
@@ -216,6 +217,108 @@ string hanyaAngka(string pesan) {
         }
     }
 }
+
+bool login(User data[], int jumlah, string username, string password, int &userIndex) {
+    for (int i=0; i < jumlah; i++) {
+        if (username == data[i].usr && password == data[i].pw) {
+            userIndex = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool usernameAda (User data[], int jumlah, string username) {
+    for (int i=0; i < jumlah; i++) {
+        if (data[i].usr == username) return true;
+    }
+    return false;
+}
+
+int cariPendudukDariNama (Penduduk data[], int jumlah, string nama, int hasilCari[]) {
+    int jumlahHasil = 0;
+    for (int i=0; i < jumlah; i++) {
+        if (data[i].nama == nama) {
+            hasilCari[jumlahHasil] = i;
+            jumlahHasil++;
+        }
+    }
+    return jumlahHasil;
+}
+
+bool punyaAkun (User dataUser[], int jumlahUser, string nik) {
+    for (int i=0; i < jumlahUser; i++) {
+        if (dataUser[i].dataDiri.nik == nik) return true;
+    }
+    return false;
+}
+
+void registarsi(User dataUser[], int &jumlahUser, Penduduk dataPenduduk[], int jumlahPenduduk) {
+    string usernameBaru = inputStr("Username: ");
+    if (usernameAda(dataUser, jumlahUser, usernameBaru)) {
+        cout << "Username sudah digunakan!\n";
+        return;
+    }
+
+    string passwordBaru = inputStr("Password: ");
+    if (passwordBaru.length() < 3) {
+        cout << "Minimal berjumlah 3 karakter!\n";
+        return;
+    }
+
+    string namaCari = inputStr("Nama lengkap: ");
+    int hasilCari[100];
+    int jumlahHasil = cariPendudukDariNama(dataPenduduk, jumlahPenduduk, namaCari, hasilCari);
+
+    int filter[100];
+    int jumlahFilter = 0;
+    for (int i=0; i < jumlahHasil; i++) {
+        if (!punyaAkun(dataUser, jumlahUser, dataPenduduk[hasilCari[i]].nik)) {
+            filter[jumlahFilter++] = hasilCari[i];
+        }
+    }
+
+    if (jumlahFilter == 0) {
+        cout << "Nama tidak ditemukan atau nama sudah punya akun!\n";
+        return;
+    }
+
+    int indexPenduduk;
+    if (jumlahFilter == 1) {
+        indexPenduduk = filter[0];
+    } else {
+        Table table;
+        table.add_row({"No", "Nama", "Alamat", "NIK"});
+        for (int i = 0; i < jumlahFilter; i++) {
+            table.add_row({
+                to_string(i+1),
+                dataPenduduk[filter[i]].nama,
+                dataPenduduk[filter[i]].alamat,
+                dataPenduduk[filter[i]].nik
+            });
+            table.column(0).format().width(4); // No
+            table.column(1).format().width(16); //Nama
+            table.column(2).format().width(16); // Alamat
+            table.column(3).format().width(6); // NIK
+        }
+        cout << table << "\n";
+
+        int pilih;
+        cout << "Pilih nomor: ";
+        while (!(cin >> pilih) || pilih < 1 || pilih > jumlahFilter) {
+            cin.clear();
+            cin.ignore(100, '\n');
+            cout << "Tidak valid!\n Pilih: ";
+        }
+        indexPenduduk = filter[pilih-1];
+    }
+
+    dataUser[jumlahUser++] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
+    cout << "Registrasi berhasil!\n";
+    cout << "NIK kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
+}
+
+
 
 int main() {
     string menuUtama[] = {"Login", "Register", "Keluar"};

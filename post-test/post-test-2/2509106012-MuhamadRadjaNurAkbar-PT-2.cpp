@@ -826,7 +826,7 @@ int main() {
                                         cout << "Masukkan ID surat yang ingin diubah: \n";
                                         cin.ignore();
                                         getline(cin, cariID);
-
+                                        
                                         int indexCari = -1;
                                         for (int i = 0; i < jumlahSurat; i++) {
                                             if (dataSurat[i].idSurat == cariID && 
