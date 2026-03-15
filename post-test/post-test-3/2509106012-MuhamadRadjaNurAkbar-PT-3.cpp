@@ -169,6 +169,13 @@ void hapus(Surat data[], int &jumlah, int index) {
     jumlah--;
 }
 
+bool konfirmasi(string pesan) {
+    char jawaban;
+    cout << pesan << " (y/n): ";
+    cin >> jawaban;
+    return jawaban == 'y';
+}
+
 string inputStr(string pesan) {
     string hasil;
     while (true) {
@@ -218,14 +225,25 @@ string hanyaAngka(string pesan) {
     }
 }
 
-bool login(User data[], int jumlah, string username, string password, int &userIndex) {
-    for (int i=0; i < jumlah; i++) {
-        if (username == data[i].usr && password == data[i].pw) {
-            userIndex = i;
+bool login(User dataUser[], int jumlahUser, int kesempatan, int &indexUser) {
+    if (kesempatan == 0) {
+        cout << "Kesempatan habis!\n";
+        return false;
+    }
+    string username, password;
+    cout << "Username: ";
+    getline(cin, username);
+    cout << "Password: ";
+    getline(cin, password);
+    for (int i = 0; i < jumlahUser; i++) {
+        if (username == dataUser[i].usr && password == dataUser[i].pw) {
+            indexUser = i;
+            cout << "Login berhasil! Selamata datang, " << username << "!\n";
             return true;
         }
     }
-    return false;
+    cout << "Salah! Sisa kesempatan: " << kesempatan - 1 << "\n";
+    return login(dataUser, jumlahUser, kesempatan - 1, indexUser); 
 }
 
 bool usernameAda (User data[], int jumlah, string username) {
@@ -316,6 +334,195 @@ void registarsi(User dataUser[], int &jumlahUser, Penduduk dataPenduduk[], int j
     dataUser[jumlahUser++] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
     cout << "Registrasi berhasil!\n";
     cout << "NIK kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
+}
+
+bool telpAda(Penduduk data[], int jumlah, string telepon) {
+    for (int i=0; i < jumlah; i++) {
+        if (data[i].noTelp == telepon) return true;
+    }
+    return false;
+}
+
+void tambahPenduduk(Penduduk data[], int &jumlah, int &totalPenduduk) {
+    string namaBaru, alamatBaru, noTelpBaru;
+    namaBaru = inputStr("Nama penduduk: ");
+    alamatBaru = inputStr("Alamat penduduk: ");
+    noTelpBaru = hanyaAngka("No telepon penduduk: ");
+    if (telpAda(data, jumlah, noTelpBaru )) {
+        cout << "No telepon sudah digunakan!\n";
+        return;
+    }
+    string nikBaru = "PDK" + to_string(++totalPenduduk);
+    data[jumlah++] = {nikBaru, namaBaru, alamatBaru, noTelpBaru};
+    cout << "Berhasil ditambahkan!\n";
+}
+
+void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], int jumlahUser) {
+    string cariNIK;
+    cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
+    getline(cin, cariNIK);
+    int cariIndex = cariPenduduk(dataPenduduk, jumlahPenduduk, cariNIK);
+    if (cariIndex == -1) {
+        cout << "NIK tidak ditemukan!\n";
+        return;
+    }
+    cout << "Data ditemukan: \n";
+    Table table;
+    table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
+    table.add_row({
+    dataPenduduk[cariIndex].nik,
+    dataPenduduk[cariIndex].nama,
+    dataPenduduk[cariIndex].alamat,
+    dataPenduduk[cariIndex].noTelp
+    });
+    table.column(0).format().width(6); // NIK
+    table.column(1).format().width(16); // Nama
+    table.column(2).format().width(16); // Alamat
+    table.column(3).format().width(13); // No Telp
+    string opsiUbahPenduduk[] = {"Ubah nama penduduk", "Ubah alamat penduduk", "Ubah no telepon penduduk", "Kembali"};
+    int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahPenduduk, 4 );
+    switch (pilihan) {
+        case 1: {
+            string namaGanti = inputStr("Nama baru: ");
+            dataPenduduk[cariIndex].nama = namaGanti;
+            for (int i=0; i < jumlahUser; i++) {
+                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                    dataUser[i].dataDiri.nama = namaGanti;
+                    break;
+                }
+            }
+            cout << "Berhasil diubah!\n";
+            break;
+        }
+        case 2: {
+            string alamatGanti = inputStr("Alamat baru: ");
+            dataPenduduk[cariIndex].alamat = alamatGanti;
+            for (int i=0; i < jumlahUser; i++) {
+                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                    dataUser[i].dataDiri.alamat = alamatGanti;
+                    break;
+                }
+            }
+            cout << "Berhasil diubah!\n";
+            break;
+        }
+        case 3: {
+            string noTelpGanti = hanyaAngka("No telepon baru: ");
+            if (telpAda(dataPenduduk, jumlahPenduduk, noTelpGanti)) {
+                cout << "Nomor telepon sudah digunakan!\n";
+                return;
+            }
+            dataPenduduk[cariIndex].noTelp = noTelpGanti;
+            for (int i=0; i < jumlahUser; i++) {
+                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                    dataUser[i].dataDiri.noTelp = noTelpGanti;
+                    break;
+                }
+            }
+            cout << "Berhasil diubah!\n";
+            break;
+        }
+        case 4: {
+            break;
+        }
+    }
+}
+
+void hapusPendudukAdmin(Penduduk dataPenduduk[], int &jumlahPenduduk, User dataUser[], int &jumlahUser, Surat dataSurat[], int &jumlahSurat, int &indexUser) {
+    string cariNIK;
+    cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
+    getline(cin, cariNIK);
+    int cariIndex = cariPenduduk(dataPenduduk, jumlahPenduduk, cariNIK);
+    if (cariIndex == -1) {
+        cout << "NIK tidak ditemukan!\n";
+        return;
+    }
+    bool adaAdmin = false;
+    for (int i = 0; i < jumlahUser; i++) {
+        if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik &&
+        dataUser[i].role == "admin") {
+            adaAdmin = true;
+            break;
+        }
+    }
+    if (adaAdmin) {
+        cout << "Tidak bisa hapus penduduk dengan akun admin!\n";
+        return;
+    }
+    cout << "Data ditemukan: \n";
+    Table table;
+    table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
+    table.add_row({
+    dataPenduduk[cariIndex].nik,
+    dataPenduduk[cariIndex].nama,
+    dataPenduduk[cariIndex].alamat,
+    dataPenduduk[cariIndex].noTelp
+    });
+    table.column(0).format().width(6); // NIK
+    table.column(1).format().width(16); // Nama
+    table.column(2).format().width(16); // Alamat
+    table.column(3).format().width(13); // No Telp
+
+    if (!konfirmasi("Yakin ingin hapus?")) {
+        cout << "Batal!\n";
+        return;
+    }
+    string nikHapus = dataPenduduk[cariIndex].nik;
+    hapus(dataPenduduk, jumlahPenduduk, cariIndex);
+
+    for (int i=0; i < jumlahUser; i++) {
+        if (dataUser[i].dataDiri.nik == nikHapus) {
+            if (i<indexUser) indexUser--;
+            hapus(dataUser, jumlahUser, i);
+            break;
+        }
+    }
+
+    for (int i=0; i < jumlahSurat; i++) {
+        if (dataSurat[i].nikPemohon == nikHapus) {
+            hapus(dataSurat, jumlahSurat, i);
+            i--;
+        }
+    }
+    cout << "Berhasil dihapus!\n";
+}
+
+void hapusAkun(User data[], int &jumlah, int &indexUser) {
+    string inputUser;
+    cout << "Masukkan username dari akun yang ingin dihapus: ";
+    getline(cin, inputUser);
+    int cariIndex = cariUser(data, jumlah, inputUser);
+    if (cariIndex == -1) {
+        cout << "Username tidak ditemukan!\n";
+        return;
+    }
+    if (data[cariIndex].role == "admin") {
+        cout << "Tidak bisa hapus akun admin!\n";
+        return;
+    }
+    cout << "Data ditemukan: \n";
+    Table table;
+    table.add_row({"Username", "Role", "NIK", "Nama"});
+    table.add_row({
+    data[cariIndex].usr,
+    data[cariIndex].role,
+    data[cariIndex].dataDiri.nik,
+    data[cariIndex].dataDiri.nama
+    });
+    table.column(0).format().width(16); // Username
+    table.column(1).format().width(5); // Role
+    table.column(2).format().width(6); // NIK
+    table.column(3).format().width(16); // Nama
+    if (!konfirmasi("Yakin ingin hapus?")) {
+        cout << "Batal hapus!\n";
+        return;
+    }
+
+    hapus(data, jumlah, cariIndex);
+    if (cariIndex < indexUser) {
+        indexUser--;
+    }
+    cout << "Berhasil dihapus!\n";
 }
 
 
