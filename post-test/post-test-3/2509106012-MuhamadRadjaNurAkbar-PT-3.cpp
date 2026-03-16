@@ -848,7 +848,10 @@ int main() {
         switch(pilihan) {
             case 1: {
                 cin.ignore();
-                if (!login(dataUser, jumlahUser, 3, indexUser)) break;
+                if (!login(dataUser, jumlahUser, 3, indexUser)) {
+                    cout << "Program berhenti!\n";
+                    return 0;
+                }
 
                 if (dataUser[indexUser].role == "admin") {
                     while (true) {
