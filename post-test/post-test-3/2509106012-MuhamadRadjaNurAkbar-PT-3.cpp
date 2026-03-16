@@ -160,7 +160,7 @@ void tampilSuratByNIK(Surat data[], int jumlah, string nik) {
     cout << table << "\n";
 }
 
-int cariPenduduk(Penduduk data[], int jumlah, string nik) {
+int cari(Penduduk data[], int jumlah, string nik) {
     for (int i=0; i < jumlah; i++) {
         if (data[i].nik == nik) {
             return i;
@@ -169,7 +169,7 @@ int cariPenduduk(Penduduk data[], int jumlah, string nik) {
     return -1;
 }
 
-int cariUser(User data[], int jumlah, string username) {
+int cari(User data[], int jumlah, string username) {
     for (int i=0; i < jumlah; i++) {
         if (data[i].usr == username) {
             return i;
@@ -178,7 +178,7 @@ int cariUser(User data[], int jumlah, string username) {
     return -1;
 }
 
-int cariSuratAdmin(Surat data[], int jumlah, string idSurat) {
+int cari(Surat data[], int jumlah, string idSurat) {
     for (int i=0; i < jumlah; i++) {
         if (data[i].idSurat == idSurat) {
             return i;
@@ -420,7 +420,7 @@ void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], 
     string cariNIK;
     cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
     getline(cin, cariNIK);
-    int cariIndex = cariPenduduk(dataPenduduk, jumlahPenduduk, cariNIK);
+    int cariIndex = cari(dataPenduduk, jumlahPenduduk, cariNIK);
     if (cariIndex == -1) {
         cout << "NIK tidak ditemukan!\n";
         return;
@@ -493,7 +493,7 @@ void hapusPendudukAdmin(Penduduk dataPenduduk[], int &jumlahPenduduk, User dataU
     string cariNIK;
     cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
     getline(cin, cariNIK);
-    int cariIndex = cariPenduduk(dataPenduduk, jumlahPenduduk, cariNIK);
+    int cariIndex = cari(dataPenduduk, jumlahPenduduk, cariNIK);
     if (cariIndex == -1) {
         cout << "NIK tidak ditemukan!\n";
         return;
@@ -552,7 +552,7 @@ void hapusAkun(User data[], int &jumlah, int &indexUser) {
     string inputUser;
     cout << "Masukkan username dari akun yang ingin dihapus: ";
     getline(cin, inputUser);
-    int cariIndex = cariUser(data, jumlah, inputUser);
+    int cariIndex = cari(data, jumlah, inputUser);
     if (cariIndex == -1) {
         cout << "Username tidak ditemukan!\n";
         return;
@@ -604,7 +604,7 @@ void updateSuratAdmin(Surat data[], int jumlah) {
     string cariID;
     cout << "Masukkan ID surat dari surat yang ingin diubah:";
     getline(cin, cariID);
-    int cariIndex = cariSuratAdmin(data, jumlah, cariID);
+    int cariIndex = cari(data, jumlah, cariID);
     if (cariIndex == -1) {
         cout << "Surat tidak ditemukan!\n";
         return;
@@ -659,7 +659,7 @@ void hapusSuratAdmin(Surat data[], int &jumlah) {
     string cariID;
     cout << "Masukkan ID surat dari surat yang ingin diubah:";
     getline(cin, cariID);
-    int cariIndex = cariSuratAdmin(data, jumlah, cariID);
+    int cariIndex = cari(data, jumlah, cariID);
     if (cariIndex == -1) {
         cout << "Surat tidak ditemukan!\n";
         return;

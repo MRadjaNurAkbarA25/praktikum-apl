@@ -508,7 +508,7 @@ int main() {
                                     cout << "4. Kembali \n";
                                     cout << "Pilih: ";
                                     if (!(cin >> pilihan)) {
-                                        cin.clear();
+                                        cin.clear();    
                                         cin.ignore(100, '\n');
                                         cout << "Input tidak valid!\n\n";
                                         continue;
