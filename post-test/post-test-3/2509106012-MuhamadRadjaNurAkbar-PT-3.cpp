@@ -61,7 +61,7 @@ int tampilMenu(string judul, string opsi[], int jumlah) {
     while (!(cin >> pilih) || pilih < 1 || pilih > jumlah) {
         cin.clear();
         cin.ignore(100, '\n');
-        cout << "Tidak valid!";
+        cout << "Tidak valid!\n";
     }
     return pilih;
 }
@@ -230,7 +230,7 @@ string inputStr(string pesan) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil != "") return hasil;
-        cout << "Tidak boleh kosong!";
+        cout << "Tidak boleh kosong!\n";
     }
 }
 
