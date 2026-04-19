@@ -191,6 +191,31 @@ int linearSearch(void* data, int jumlah, string kunci, int tipe) {
     return -1;
 }
 
+int jumpSearch(Penduduk* arr, int jumlah, string kunci) {
+    int step = sqrt(jumlah);
+    int prev = 0;
+
+    while((arr+min(step, jumlah)-1)->nama > kunci) {
+        prev = step;
+        step += sqrt(jumlah);
+        if (prev >= jumlah) {
+            cout << "Penduduk tidak ditemukan!\n";
+            return -1;
+        }
+    }
+    while((arr+prev)->nama > kunci) {
+        prev++;
+        if (prev == min(step, jumlah)) {
+            cout << "Penduduk tidak ditemukan!\n";
+            return -1;
+        }
+    }
+    if ((arr+prev)->nama == kunci) {
+        return prev;
+    }
+    return -1;
+}
+
 int cariSuratUser(Surat data[], int jumlah, string idSurat, string nik) {
     for (int i=0; i < jumlah; i++) {
         if (data[i].idSurat == idSurat && data[i].nikPemohon == nik) {
@@ -879,31 +904,6 @@ void insertionSortStatusSurat(Surat* arr, int n) {
     }
 }
 
-int jumpSearch(Penduduk* arr, int jumlah, string kunci) {
-    int step = sqrt(jumlah);
-    int prev = 0;
-
-    while((arr+min(step, jumlah)-1)->nama > kunci) {
-        prev = step;
-        step += sqrt(jumlah);
-        if (prev >= jumlah) {
-            cout << "Penduduk tidak ditemukan!\n";
-            return -1;
-        }
-    }
-    while((arr+prev)->nama > kunci) {
-        prev++;
-        if (prev == min(step, jumlah)) {
-            cout << "Penduduk tidak ditemukan!\n";
-            return -1;
-        }
-    }
-    if ((arr+prev)->nama == kunci) {
-        return prev;
-    }
-    return -1;
-}
-
 int main() {
     Penduduk dataPenduduk[100];
     User dataUser[100];
@@ -984,11 +984,6 @@ int main() {
                                                 temp[i] = dataPenduduk[i];
                                             }
                                             bubbleSortNamaPenduduk(temp, jumlahPenduduk);
-                                            cout << "\n=== Data setelah sorting ===\n";
-                                            for (int i=0; i<jumlahPenduduk; i++) {
-                                                cout << i << ". " << temp[i].nama << "\n";
-                                            }
-                                            cout << "============================\n\n";
                                             string cariNama;
                                             cout << "Masukkan nama penduduk: ";
                                             getline(cin, cariNama);
