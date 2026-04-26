@@ -3,6 +3,8 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include "rang.hpp"
+using namespace rang;
 using namespace tabulate;
 using namespace std;
 
@@ -30,26 +32,26 @@ struct Surat {
     string keterangan;
 };
 
-    string daftarJenis[] {
-        "Surat Keterangan Domisili",
-        "Surat Keterangan Tidak Mampu",
-        "Surat Pengantar KTP",
-        "Surat Keterangan Kelahiran"
-    };
+string daftarJenis[] {
+    "Surat Keterangan Domisili",
+    "Surat Keterangan Tidak Mampu",
+    "Surat Pengantar KTP",
+    "Surat Keterangan Kelahiran"
+};
 
-    string daftarKeperluan[] {
-        "Melamar pekerjaan",
-        "Keperluan pendidikan",
-        "Keperluan pernikahan",
-        "Lainnya"
-    };
+string daftarKeperluan[] {
+    "Melamar pekerjaan",
+    "Keperluan pendidikan",
+    "Keperluan pernikahan",
+    "Lainnya"
+};
 
-        string daftarStatus[] {
-        "menunggu",
-        "diproses",
-        "selesai",
-        "ditolak"
-    };
+    string daftarStatus[] {
+    "menunggu",
+    "diproses",
+    "selesai",
+    "ditolak"
+};
 
 
 int tampilMenu(string judul, string opsi[], int jumlah) {
@@ -64,7 +66,7 @@ int tampilMenu(string judul, string opsi[], int jumlah) {
     while (!(cin >> pilih) || pilih < 1 || pilih > jumlah) {
         cin.clear();
         cin.ignore(100, '\n');
-        cout << "Tidak valid!\n";
+        cout << fg::red << "Tidak valid!" << style::reset <<"\n";
     }
     return pilih;
 }
@@ -151,7 +153,7 @@ void tampilSuratByNIK(Surat data[], int jumlah, string nik) {
         }
     }
     if (!ada) {
-        cout << "Belum ada surat!\n";
+        cout << fg::red << "Belum ada surat!" << style::reset <<"\n";
         return;
     }
     table.column(0).format().width(4);
@@ -199,14 +201,14 @@ int jumpSearch(Penduduk* arr, int jumlah, string kunci) {
         prev = step;
         step += sqrt(jumlah);
         if (prev >= jumlah) {
-            cout << "Penduduk tidak ditemukan!\n";
+            cout << fg::red << "Penduduk tidak ditemukan!"<< style::reset <<"\n";
             return -1;
         }
     }
     while((arr+prev)->nama > kunci) {
         prev++;
         if (prev == min(step, jumlah)) {
-            cout << "Penduduk tidak ditemukan!\n";
+            cout << fg::red << "Penduduk tidak ditemukan!"<< style::reset <<"\n";
             return -1;
         }
     }
@@ -259,7 +261,7 @@ string inputStr(string pesan) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil != "") return hasil;
-        cout << "Tidak boleh kosong!\n";
+        cout << fg::red << "Tidak boleh kosong!"<< style::reset <<"\n";
     }
 }
 
@@ -269,9 +271,9 @@ string inputMax(string pesan, int maxLen) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil == "") {
-            cout << "Tidak boleh kosong!\n";
+            cout << fg::red << "Tidak boleh kosong!"<< style::reset <<"\n";
         } else if (hasil.length() > maxLen) {
-            cout << "Tidak boleh lebih dari " << maxLen << " karakter!\n";
+            cout << fg::red << "Tidak boleh lebih dari " << maxLen << " karakter!" << style::reset << "\n";
         } else {
             return hasil;
         }
@@ -284,9 +286,9 @@ string inputMin(string pesan, int minLen) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil == "") {
-            cout << "Tidak boleh kosong!\n";
+            cout << fg::red << "Tidak boleh kosong!"<< style::reset <<"\n";
         } else if (hasil.length() < minLen) {
-            cout << "Tidak boleh kurang dari " << minLen << " karakter!\n";
+            cout << fg::red << "Tidak boleh kurang dari " << minLen << " karakter!" << style::reset << "\n";
         } else {
             return hasil;
         }
@@ -299,7 +301,7 @@ string hanyaAngka(string pesan) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil == "") {
-            cout << "Tidak boleh kosong!\n";
+            cout << fg::red << "Tidak boleh kosong!"<< style::reset <<"\n";
             continue;
         }
         bool valid = true;
@@ -310,7 +312,7 @@ string hanyaAngka(string pesan) {
             }
         }
         if (!valid) {
-            cout << "Hanya boleh angka!\n";
+            cout << fg::red << "Hanya boleh angka!"<< style::reset <<"\n";
         } else {
             return hasil;
         }
@@ -329,14 +331,14 @@ bool login(User dataUser[], int jumlahUser, int kesempatan, int &indexUser) {
         for (int i = 0; i < jumlahUser; i++) {
             if (username == dataUser[i].usr && password == dataUser[i].pw) {
                 indexUser = i;
-                cout << "Login berhasil! Selamat datang, " << username << "!\n";
+                cout << fg::green << "Login berhasil! Selamat datang, " << username << "!" << style::reset<<"\n";
                 return true;
             }
         }
-        cout << "Salah! Sisa kesempatan: " << kesempatan - 1 << "\n";
+        cout << fg::yellow << "Salah! Sisa kesempatan: " << kesempatan - 1 << style::reset << "\n";
         return login(dataUser, jumlahUser, kesempatan - 1, indexUser);
     } catch (runtime_error& e) {
-        cout << "[ERROR]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[ERROR]" << e.what() << style::reset << "\n";
         return false;
     }
 }
@@ -420,9 +422,9 @@ void registarsi(User dataUser[], int &jumlahUser, Penduduk dataPenduduk[], int j
         }
         dataUser[jumlahUser++] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
         cout << "NIK kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
-        cout << "Registrasi berhasil!\n";
+        cout << fg::green << "Registrasi berhasil!"<< style::reset << "\n";
     } catch (invalid_argument& e) {
-        cout << "[INPUT TIDAK VALID]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[INPUT TIDAK VALID]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -445,85 +447,89 @@ void tambahPenduduk(Penduduk data[], int &jumlah, int &totalPenduduk) {
         totalPenduduk++;
         string nikBaru = "PDK" + string(totalPenduduk < 10 ? "00" : totalPenduduk < 100 ? "0" : "") + to_string(totalPenduduk);
         data[jumlah++] = {nikBaru, namaBaru, alamatBaru, noTelpBaru};
-        cout << "Berhasil ditambahkan!\n";
+        cout << fg::green << "Berhasil ditambahkan!" << style::reset << "\n";
     } catch (invalid_argument& e) {
-        cout << "[INPUT TIDAK VALID]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[INPUT TIDAK VALID]" << e.what() << style::reset << "\n";
     }
 }
 
 void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], int jumlahUser) {
-    string cariNIK;
-    cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
-    getline(cin, cariNIK);
-    int cariIndex = linearSearch(dataPenduduk, jumlahPenduduk, cariNIK, 1);
-    if (cariIndex == -1) {
-        cout << "NIK tidak ditemukan!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
-    table.add_row({
-    dataPenduduk[cariIndex].nik,
-    dataPenduduk[cariIndex].nama,
-    dataPenduduk[cariIndex].alamat,
-    dataPenduduk[cariIndex].noTelp
-    });
-    table.column(0).format().width(6); // NIK
-    table.column(1).format().width(16); // Nama
-    table.column(2).format().width(16); // Alamat
-    table.column(3).format().width(13); // No Telp
-    cout << table << "\n";
-    string opsiUbahPenduduk[] = {"Ubah nama penduduk", "Ubah alamat penduduk", "Ubah no telepon penduduk", "Kembali"};
-    int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahPenduduk, 4 );
-    cin.ignore();
-    switch (pilihan) {
-        case 1: {
-            string namaGanti = inputStr("Nama baru: ");
-            dataPenduduk[cariIndex].nama = namaGanti;
-            for (int i=0; i < jumlahUser; i++) {
-                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
-                    dataUser[i].dataDiri.nama = namaGanti;
-                    break;
+    try {
+        string cariNIK;
+        cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
+        getline(cin, cariNIK);
+        int cariIndex = linearSearch(dataPenduduk, jumlahPenduduk, cariNIK, 1);
+        if (cariIndex == -1) {
+            throw out_of_range("NIK tidak ditemukan!");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
+        table.add_row({
+        dataPenduduk[cariIndex].nik,
+        dataPenduduk[cariIndex].nama,
+        dataPenduduk[cariIndex].alamat,
+        dataPenduduk[cariIndex].noTelp
+        });
+        table.column(0).format().width(6); // NIK
+        table.column(1).format().width(16); // Nama
+        table.column(2).format().width(16); // Alamat
+        table.column(3).format().width(13); // No Telp
+        cout << table << "\n";
+        string opsiUbahPenduduk[] = {"Ubah nama penduduk", "Ubah alamat penduduk", "Ubah no telepon penduduk", "Kembali"};
+        int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahPenduduk, 4 );
+        cin.ignore();
+        switch (pilihan) {
+            case 1: {
+                string namaGanti = inputStr("Nama baru: ");
+                dataPenduduk[cariIndex].nama = namaGanti;
+                for (int i=0; i < jumlahUser; i++) {
+                    if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                        dataUser[i].dataDiri.nama = namaGanti;
+                        break;
+                    }
                 }
+                cout << fg::green << "Berhasil diubah!" << style::reset << "\n";
+                break;
             }
-            cout << "Berhasil diubah!\n";
-            break;
-        }
-        case 2: {
-            string alamatGanti = inputStr("Alamat baru: ");
-            dataPenduduk[cariIndex].alamat = alamatGanti;
-            for (int i=0; i < jumlahUser; i++) {
-                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
-                    dataUser[i].dataDiri.alamat = alamatGanti;
-                    break;
+            case 2: {
+                string alamatGanti = inputStr("Alamat baru: ");
+                dataPenduduk[cariIndex].alamat = alamatGanti;
+                for (int i=0; i < jumlahUser; i++) {
+                    if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                        dataUser[i].dataDiri.alamat = alamatGanti;
+                        break;
+                    }
                 }
+                cout << fg::green << "Berhasil diubah!" << style::reset << "\n";
+                break;
             }
-            cout << "Berhasil diubah!\n";
-            break;
-        }
-        case 3: {
-            try {
-            string noTelpGanti = hanyaAngka("No telepon baru: ");
-            if (telpAda(dataPenduduk, jumlahPenduduk, noTelpGanti)) {
-                throw invalid_argument("Nomor telepon sudah digunakan!");
-            }
-            dataPenduduk[cariIndex].noTelp = noTelpGanti;
-            for (int i=0; i < jumlahUser; i++) {
-                if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
-                    dataUser[i].dataDiri.noTelp = noTelpGanti;
-                    break;
+            case 3: {
+                try {
+                string noTelpGanti = hanyaAngka("No telepon baru: ");
+                if (telpAda(dataPenduduk, jumlahPenduduk, noTelpGanti)) {
+                    throw invalid_argument("Nomor telepon sudah digunakan!");
                 }
+                dataPenduduk[cariIndex].noTelp = noTelpGanti;
+                for (int i=0; i < jumlahUser; i++) {
+                    if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik) {
+                        dataUser[i].dataDiri.noTelp = noTelpGanti;
+                        break;
+                    }
+                }
+                cout << fg::green << "Berhasil diubah!" << style::reset << "\n";
+                break; 
+                } catch (invalid_argument& e) {
+                    cout << fg::red << style::bold << "[INPUT TIDAK VALID]" << e.what() << style::reset << "\n";
+                }
+                break;
             }
-            cout << "Berhasil diubah!\n";
-            break; 
-            } catch (invalid_argument& e) {
-                cout <<  "[INPUT TIDAK VALID]" << e.what() << "\n";
+            case 4: {
+                break;
             }
         }
-        case 4: {
-            break;
-        }
+    } catch (out_of_range& e) {
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -582,11 +588,11 @@ void hapusPendudukAdmin(Penduduk dataPenduduk[], int &jumlahPenduduk, User dataU
                 i--;
             }
         }
-        cout << "Berhasil dihapus!\n";
+        cout << fg::green << "Berhasil dihapus!" << style::reset << "\n";
     } catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+        cout << fg:: red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     } catch (logic_error& e) {
-        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[PERMINTAAN DITOLAK]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -597,10 +603,10 @@ void hapusAkun(User data[], int &jumlah, int &indexUser) {
         getline(cin, inputUser);
         int cariIndex = linearSearch(data, jumlah, inputUser, 2);
         if (cariIndex == -1) {
-            throw out_of_range("NIK tidak ditemukan!");
+            throw out_of_range("Username tidak ditemukan!");
         }
         if (data[cariIndex].role == "admin") {
-            throw logic_error("Tidak bisa hapus penduduk dengan akun admin");
+            throw logic_error("Tidak bisa hapus akun dengan akun admin");
         }
         cout << "Data ditemukan: \n";
         Table table;
@@ -625,11 +631,11 @@ void hapusAkun(User data[], int &jumlah, int &indexUser) {
         if (cariIndex < indexUser) {
             indexUser--;
         }
-        cout << "Berhasil dihapus!\n";
+        cout << fg::green << "Berhasil dihapus!" << style::reset << "\n";
     } catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     } catch (logic_error& e) {
-        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[PERMINTAAN DITOLAK]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -639,7 +645,7 @@ string inputOpsional(string pesan, int maxLen) {
         cout << pesan;
         getline(cin, hasil);
         if (hasil.length()>maxLen) {
-            cout << "Tidak boleh lebih dari " << maxLen << " karakter!\n";
+            cout << fg::red << "Tidak boleh lebih dari " << maxLen << " karakter!" << style::reset << "\n";
         } else {
             return hasil;
         }
@@ -680,7 +686,7 @@ void updateSuratAdmin(Surat data[], int jumlah) {
             case 1: {
                 int pilihStatus = tampilMenu("Pilih status\n", daftarStatus, 4); // Tolong dicek lagi
                 data[cariIndex].status = daftarStatus[pilihStatus-1];
-                cout << "Status berhasil diganti!\n";
+                cout << fg::green << "Status berhasil diganti!" << style::reset << "\n";
                 break;
             }
             case 2: {
@@ -692,7 +698,7 @@ void updateSuratAdmin(Surat data[], int jumlah) {
                     break;
                 }
                 data[cariIndex].keterangan = isiKeterangan;
-                cout << "Keterangan berhasil diubah!\n";
+                cout << fg::green << "Keterangan berhasil diubah!" << style::reset << "\n";
                 break;
             }
             case 3: {
@@ -700,7 +706,7 @@ void updateSuratAdmin(Surat data[], int jumlah) {
             }
         }
     } catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n"; 
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -738,9 +744,9 @@ void hapusSuratAdmin(Surat data[], int &jumlah) {
         }
 
         hapus(data, jumlah,cariIndex);
-        cout << "Berhasil dihapus!\n";
+        cout << fg::green << "Berhasil dihapus!" << style::reset << "\n";
     } catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n"; 
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -756,10 +762,10 @@ void gantiPassword(User data[], int indexUser) {
             throw invalid_argument("Konfirmasi password tidak cocok!");
 
         data[indexUser].pw = passwordGanti;
-        cout << "Password berhasil diubah!\n";
+        cout << fg::green << "Password berhasil diubah!" << style::reset << "\n";
 
     } catch (invalid_argument& e) {
-        cout << "[INPUT TIDAK VALID] " << e.what() << "\n";
+        cout << fg::red << style::bold << "[INPUT TIDAK VALID] " << e.what() << style::reset << "\n";
     }
 }
 
@@ -818,13 +824,13 @@ void editSuratUser(Surat dataSurat[], int jumlahSurat, int indexUser, User dataU
             case 1: {
                 int pilihJenis = tampilMenu("Pilih jenis\n", daftarJenis, 4);
                 dataSurat[cariIndex].jenisSurat = daftarJenis[pilihJenis-1];
-                cout << "Berhasil diubah!\n";
+                cout << fg::green << "Berhasil diubah!" << style::reset << "\n";
                 break;
             }
             case 2: {
                 int pilihKeperluan = tampilMenu("Pilih kepeluan", daftarKeperluan, 4);
                 dataSurat[cariIndex].keperluan = daftarKeperluan[pilihKeperluan-1];
-                cout << "Berhasil diubah!\n";
+                cout << fg::green << "Berhasil diubah!" << style::reset << "\n";
                 break;
             }
             case 3: {
@@ -832,9 +838,9 @@ void editSuratUser(Surat dataSurat[], int jumlahSurat, int indexUser, User dataU
             }
         }     
     } catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     } catch (logic_error& e) {
-        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
+        cout << fg::red << style::bold <<"[PERMINTAAN DITOLAK]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -848,7 +854,7 @@ void hapusSuratUser(Surat dataSurat[], int &jumlahSurat, int indexUser, User dat
             throw out_of_range("Surat tidak ditemukan!");
         }
         if (!statusMenunggu(dataSurat, cariIndex)) {
-            throw logic_error("Surat sudah diproses, tidak bisa diedit!");
+            throw logic_error("Surat sudah diproses, tidak bisa dihapus!");
         }
         cout << "Data ditemukan: \n";
         Table table;
@@ -875,11 +881,11 @@ void hapusSuratUser(Surat dataSurat[], int &jumlahSurat, int indexUser, User dat
             }
 
             hapus(dataSurat, jumlahSurat, cariIndex);
-            cout << "Berhasil dihapus!\n";
+            cout << fg::green << "Berhasil dihapus!" << style::reset << "\n";
     }  catch (out_of_range& e) {
-        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[TIDAK DITEMUKAN]" << e.what() << style::reset << "\n";
     } catch (logic_error& e) {
-        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
+        cout << fg::red << style::bold << "[PERMINTAAN DITOLAK]" << e.what() << style::reset << "\n";
     }
 }
 
@@ -980,7 +986,7 @@ int main() {
             case 1: {
                 cin.ignore();
                 if (!login(dataUser, jumlahUser, 3, indexUser)) {
-                    cout << "Program berhenti!\n";
+                    cout << fg::red << style::bold << "Program berhenti!" << style::reset <<"\n";
                     return 0;
                 }
 
@@ -1129,7 +1135,7 @@ int main() {
                                 break;
                             }
                             case 4: {
-                                cout << "Log-out berhasil!\n";
+                                cout << fg::green << "Log-out berhasil!" << style::reset << "\n";
                                 indexUser = -1;
                                 break;
                             }
@@ -1208,7 +1214,7 @@ int main() {
                                 break;
                             }
                             case 4: {
-                                cout << "Log-out berhasil!\n";
+                                cout << fg::green << "Log-out berhasil!" << style::reset << "\n";
                                 indexUser = -1;
                                 break;
                             }
