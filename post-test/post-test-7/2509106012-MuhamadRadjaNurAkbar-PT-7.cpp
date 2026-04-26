@@ -318,29 +318,8 @@ string hanyaAngka(string pesan) {
 }
 
 bool login(User dataUser[], int jumlahUser, int kesempatan, int &indexUser) {
-    if (kesempatan == 0) {
-        cout << "Kesempatan habis!\n";
-        return false;
-    }
-    string username, password;
-    cout << "Username: ";
-    getline(cin, username);
-    cout << "Password: ";
-    getline(cin, password);
-    for (int i = 0; i < jumlahUser; i++) {
-        if (username == dataUser[i].usr && password == dataUser[i].pw) {
-            indexUser = i;
-            cout << "Login berhasil! Selamat datang, " << username << "!\n";
-            return true;
-        }
-    }
-    cout << "Salah! Sisa kesempatan: " << kesempatan - 1 << "\n";
-    return login(dataUser, jumlahUser, kesempatan - 1, indexUser); 
-}
-
-bool login(User dataUser[], int jumlahUser, int kesempatan, int &indexUser) {
     try {
-        if (kesempatan = 0) 
+        if (kesempatan == 0) 
             throw runtime_error("Kesempatan login sudah habis!");
         string username, password;
         cout << "Username: ";
@@ -388,64 +367,63 @@ bool punyaAkun (User dataUser[], int jumlahUser, string nik) {
 }
 
 void registarsi(User dataUser[], int &jumlahUser, Penduduk dataPenduduk[], int jumlahPenduduk) {
-    string usernameBaru = inputStr("Username: ");
-    if (usernameAda(dataUser, jumlahUser, usernameBaru)) {
-        cout << "Username sudah digunakan!\n";
-        return;
-    }
-
-    string passwordBaru = inputMin("Password: ", 3);
-
-    string namaCari = inputStr("Nama lengkap: ");
-    int hasilCari[100];
-    int jumlahHasil = cariPendudukDariNama(dataPenduduk, jumlahPenduduk, namaCari, hasilCari);
-
-    int filter[100];
-    int jumlahFilter = 0;
-    for (int i=0; i < jumlahHasil; i++) {
-        if (!punyaAkun(dataUser, jumlahUser, dataPenduduk[hasilCari[i]].nik)) {
-            filter[jumlahFilter++] = hasilCari[i];
+    try {
+        string usernameBaru = inputStr("Username: ");
+        if (usernameAda(dataUser, jumlahUser, usernameBaru)) {
+            throw invalid_argument("Username sudah digunakan!");
         }
-    }
+        string passwordBaru = inputMin("Password: ", 3);
 
-    if (jumlahFilter == 0) {
-        cout << "Nama tidak ditemukan atau nama sudah punya akun!\n";
-        return;
-    }
+        string namaCari = inputStr("Nama lengkap: ");
+        int hasilCari[100];
+        int jumlahHasil = cariPendudukDariNama(dataPenduduk, jumlahPenduduk, namaCari, hasilCari);
 
-    int indexPenduduk;
-    if (jumlahFilter == 1) {
-        indexPenduduk = filter[0];
-    } else {
-        Table table;
-        table.add_row({"No", "Nama", "Alamat", "NIK"});
-        for (int i = 0; i < jumlahFilter; i++) {
-            table.add_row({
-                to_string(i+1),
-                dataPenduduk[filter[i]].nama,
-                dataPenduduk[filter[i]].alamat,
-                dataPenduduk[filter[i]].nik
-            });
+        int filter[100];
+        int jumlahFilter = 0;
+        for (int i=0; i < jumlahHasil; i++) {
+            if (!punyaAkun(dataUser, jumlahUser, dataPenduduk[hasilCari[i]].nik)) {
+                filter[jumlahFilter++] = hasilCari[i];
+            }
         }
-        table.column(0).format().width(4); // No
-        table.column(1).format().width(16); //Nama
-        table.column(2).format().width(16); // Alamat
-        table.column(3).format().width(6); // NIK
-        cout << table << "\n";
 
-        int pilih;
-        cout << "Pilih nomor: ";
-        while (!(cin >> pilih) || pilih < 1 || pilih > jumlahFilter) {
-            cin.clear();
-            cin.ignore(100, '\n');
-            cout << "Tidak valid!\n Pilih: ";
+        if (jumlahFilter == 0) {
+            throw invalid_argument("Nama tidak ditemukan atau sudah punya akun!");
         }
-        indexPenduduk = filter[pilih-1];
-    }
+        int indexPenduduk;
+        if (jumlahFilter == 1) {
+            indexPenduduk = filter[0];
+        } else {
+            Table table;
+            table.add_row({"No", "Nama", "Alamat", "NIK"});
+            for (int i = 0; i < jumlahFilter; i++) {
+                table.add_row({
+                    to_string(i+1),
+                    dataPenduduk[filter[i]].nama,
+                    dataPenduduk[filter[i]].alamat,
+                    dataPenduduk[filter[i]].nik
+                });
+            }
+            table.column(0).format().width(4); // No
+            table.column(1).format().width(16); //Nama
+            table.column(2).format().width(16); // Alamat
+            table.column(3).format().width(6); // NIK
+            cout << table << "\n";
 
-    dataUser[jumlahUser++] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
-    cout << "Registrasi berhasil!\n";
-    cout << "NIK kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
+            int pilih;
+            cout << "Pilih nomor: ";
+            while (!(cin >> pilih) || pilih < 1 || pilih > jumlahFilter) {
+                cin.clear();
+                cin.ignore(100, '\n');
+                cout << "Tidak valid!\n Pilih: ";
+            }
+            indexPenduduk = filter[pilih-1];
+        }
+        dataUser[jumlahUser++] = {usernameBaru, passwordBaru, "user", dataPenduduk[indexPenduduk]};
+        cout << "NIK kamu: " << dataPenduduk[indexPenduduk].nik << "\n";
+        cout << "Registrasi berhasil!\n";
+    } catch (invalid_argument& e) {
+        cout << "[INPUT TIDAK VALID]" << e.what() << "\n";
+    }
 }
 
 bool telpAda(Penduduk data[], int jumlah, string telepon) {
@@ -456,18 +434,21 @@ bool telpAda(Penduduk data[], int jumlah, string telepon) {
 }
 
 void tambahPenduduk(Penduduk data[], int &jumlah, int &totalPenduduk) {
-    string namaBaru, alamatBaru, noTelpBaru;
-    namaBaru = inputStr("Nama penduduk: ");
-    alamatBaru = inputStr("Alamat penduduk: ");
-    noTelpBaru = hanyaAngka("No telepon penduduk: ");
-    if (telpAda(data, jumlah, noTelpBaru )) {
-        cout << "No telepon sudah digunakan!\n";
-        return;
+    try {
+        string namaBaru, alamatBaru, noTelpBaru;
+        namaBaru = inputStr("Nama penduduk: ");
+        alamatBaru = inputStr("Alamat penduduk: ");
+        noTelpBaru = hanyaAngka("No telepon penduduk: ");
+        if (telpAda(data, jumlah, noTelpBaru )) {
+            throw invalid_argument("Nomor telepon sudah digunakan!");
+        }
+        totalPenduduk++;
+        string nikBaru = "PDK" + string(totalPenduduk < 10 ? "00" : totalPenduduk < 100 ? "0" : "") + to_string(totalPenduduk);
+        data[jumlah++] = {nikBaru, namaBaru, alamatBaru, noTelpBaru};
+        cout << "Berhasil ditambahkan!\n";
+    } catch (invalid_argument& e) {
+        cout << "[INPUT TIDAK VALID]" << e.what() << "\n";
     }
-    totalPenduduk++;
-    string nikBaru = "PDK" + string(totalPenduduk < 10 ? "00" : totalPenduduk < 100 ? "0" : "") + to_string(totalPenduduk);
-    data[jumlah++] = {nikBaru, namaBaru, alamatBaru, noTelpBaru};
-    cout << "Berhasil ditambahkan!\n";
 }
 
 void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], int jumlahUser) {
@@ -522,10 +503,10 @@ void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], 
             break;
         }
         case 3: {
+            try {
             string noTelpGanti = hanyaAngka("No telepon baru: ");
             if (telpAda(dataPenduduk, jumlahPenduduk, noTelpGanti)) {
-                cout << "Nomor telepon sudah digunakan!\n";
-                return;
+                throw invalid_argument("Nomor telepon sudah digunakan!");
             }
             dataPenduduk[cariIndex].noTelp = noTelpGanti;
             for (int i=0; i < jumlahUser; i++) {
@@ -535,7 +516,10 @@ void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], 
                 }
             }
             cout << "Berhasil diubah!\n";
-            break;
+            break; 
+            } catch (invalid_argument& e) {
+                cout <<  "[INPUT TIDAK VALID]" << e.what() << "\n";
+            }
         }
         case 4: {
             break;
@@ -544,101 +528,109 @@ void editPenduduk(Penduduk dataPenduduk[], int jumlahPenduduk, User dataUser[], 
 }
 
 void hapusPendudukAdmin(Penduduk dataPenduduk[], int &jumlahPenduduk, User dataUser[], int &jumlahUser, Surat dataSurat[], int &jumlahSurat, int &indexUser) {
-    string cariNIK;
-    cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
-    getline(cin, cariNIK);
-    int cariIndex = linearSearch(dataPenduduk, jumlahPenduduk, cariNIK, 1);
-    if (cariIndex == -1) {
-        cout << "NIK tidak ditemukan!\n";
-        return;
-    }
-    bool adaAdmin = false;
-    for (int i = 0; i < jumlahUser; i++) {
-        if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik &&
-        dataUser[i].role == "admin") {
-            adaAdmin = true;
-            break;
+    try {    
+        string cariNIK;
+        cout << "Masukkan NIK dari data penduduk yang ingin diubah: ";
+        getline(cin, cariNIK);
+        int cariIndex = linearSearch(dataPenduduk, jumlahPenduduk, cariNIK, 1);
+        if (cariIndex == -1) {
+            throw out_of_range("NIK tidak ditemukan!");
         }
-    }
-    if (adaAdmin) {
-        cout << "Tidak bisa hapus penduduk dengan akun admin!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
-    table.add_row({
-    dataPenduduk[cariIndex].nik,
-    dataPenduduk[cariIndex].nama,
-    dataPenduduk[cariIndex].alamat,
-    dataPenduduk[cariIndex].noTelp
-    });
-    table.column(0).format().width(6); // NIK
-    table.column(1).format().width(16); // Nama
-    table.column(2).format().width(16); // Alamat
-    table.column(3).format().width(13); // No Telp
-    cout << table << "\n";
-    if (!konfirmasi("Yakin ingin hapus?")) {
-        cout << "Batal!\n";
-        return;
-    }
-    string nikHapus = dataPenduduk[cariIndex].nik;
-    hapus(dataPenduduk, jumlahPenduduk, cariIndex);
+        bool adaAdmin = false;
+        for (int i = 0; i < jumlahUser; i++) {
+            if (dataUser[i].dataDiri.nik == dataPenduduk[cariIndex].nik &&
+            dataUser[i].role == "admin") {
+                adaAdmin = true;
+                break;
+            }
+        }
+        if (adaAdmin) {
+            throw logic_error("Tidak bisa hapus penduduk dengan akun admin");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"NIK", "Nama", "Alamat", "No Telp"});
+        table.add_row({
+        dataPenduduk[cariIndex].nik,
+        dataPenduduk[cariIndex].nama,
+        dataPenduduk[cariIndex].alamat,
+        dataPenduduk[cariIndex].noTelp
+        });
+        table.column(0).format().width(6); // NIK
+        table.column(1).format().width(16); // Nama
+        table.column(2).format().width(16); // Alamat
+        table.column(3).format().width(13); // No Telp
+        cout << table << "\n";
+        if (!konfirmasi("Yakin ingin hapus?")) {
+            cout << "Batal!\n";
+            return;
+        }
+        string nikHapus = dataPenduduk[cariIndex].nik;
+        hapus(dataPenduduk, jumlahPenduduk, cariIndex);
 
-    for (int i=0; i < jumlahUser; i++) {
-        if (dataUser[i].dataDiri.nik == nikHapus) {
-            if (i<indexUser) indexUser--;
-            hapus(dataUser, jumlahUser, i);
-            break;
+        for (int i=0; i < jumlahUser; i++) {
+            if (dataUser[i].dataDiri.nik == nikHapus) {
+                if (i<indexUser) indexUser--;
+                hapus(dataUser, jumlahUser, i);
+                break;
+            }
         }
-    }
 
-    for (int i=0; i < jumlahSurat; i++) {
-        if (dataSurat[i].nikPemohon == nikHapus) {
-            hapus(dataSurat, jumlahSurat, i);
-            i--;
+        for (int i=0; i < jumlahSurat; i++) {
+            if (dataSurat[i].nikPemohon == nikHapus) {
+                hapus(dataSurat, jumlahSurat, i);
+                i--;
+            }
         }
+        cout << "Berhasil dihapus!\n";
+    } catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+    } catch (logic_error& e) {
+        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
     }
-    cout << "Berhasil dihapus!\n";
 }
 
 void hapusAkun(User data[], int &jumlah, int &indexUser) {
-    string inputUser;
-    cout << "Masukkan username dari akun yang ingin dihapus: ";
-    getline(cin, inputUser);
-    int cariIndex = linearSearch(data, jumlah, inputUser, 2);
-    if (cariIndex == -1) {
-        cout << "Username tidak ditemukan!\n";
-        return;
-    }
-    if (data[cariIndex].role == "admin") {
-        cout << "Tidak bisa hapus akun admin!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"Username", "Role", "NIK", "Nama"});
-    table.add_row({
-    data[cariIndex].usr,
-    data[cariIndex].role,
-    data[cariIndex].dataDiri.nik,
-    data[cariIndex].dataDiri.nama
-    });
-    table.column(0).format().width(16); // Username
-    table.column(1).format().width(5); // Role
-    table.column(2).format().width(6); // NIK
-    table.column(3).format().width(16); // Nama
-    cout << table << "\n";
-    if (!konfirmasi("Yakin ingin hapus?")) {
-        cout << "Batal hapus!\n";
-        return;
-    }
+    try {
+        string inputUser;
+        cout << "Masukkan username dari akun yang ingin dihapus: ";
+        getline(cin, inputUser);
+        int cariIndex = linearSearch(data, jumlah, inputUser, 2);
+        if (cariIndex == -1) {
+            throw out_of_range("NIK tidak ditemukan!");
+        }
+        if (data[cariIndex].role == "admin") {
+            throw logic_error("Tidak bisa hapus penduduk dengan akun admin");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"Username", "Role", "NIK", "Nama"});
+        table.add_row({
+        data[cariIndex].usr,
+        data[cariIndex].role,
+        data[cariIndex].dataDiri.nik,
+        data[cariIndex].dataDiri.nama
+        });
+        table.column(0).format().width(16); // Username
+        table.column(1).format().width(5); // Role
+        table.column(2).format().width(6); // NIK
+        table.column(3).format().width(16); // Nama
+        cout << table << "\n";
+        if (!konfirmasi("Yakin ingin hapus?")) {
+            cout << "Batal hapus!\n";
+            return;
+        }
 
-    hapus(data, jumlah, cariIndex);
-    if (cariIndex < indexUser) {
-        indexUser--;
+        hapus(data, jumlah, cariIndex);
+        if (cariIndex < indexUser) {
+            indexUser--;
+        }
+        cout << "Berhasil dihapus!\n";
+    } catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+    } catch (logic_error& e) {
+        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
     }
-    cout << "Berhasil dihapus!\n";
 }
 
 string inputOpsional(string pesan, int maxLen) {
@@ -655,111 +647,119 @@ string inputOpsional(string pesan, int maxLen) {
 }
 
 void updateSuratAdmin(Surat data[], int jumlah) {
-    string cariID;
-    cout << "Masukkan ID surat dari surat yang ingin diubah:";
-    getline(cin, cariID);
-    int cariIndex = linearSearch(data, jumlah, cariID, 3);
-    if (cariIndex == -1) {
-        cout << "Surat tidak ditemukan!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
-        "Keperluan", "Status", "Keterangan"});
-    table.add_row({
-        data[cariIndex].idSurat,
-        data[cariIndex].nikPemohon,
-        data[cariIndex].jenisSurat,
-        data[cariIndex].keperluan,
-        data[cariIndex].status,
-        data[cariIndex].keterangan
-    });
-    table.column(0).format().width(6); // ID Surat
-    table.column(1).format().width(6); // NIK Pemohon
-    table.column(2).format().width(17); // Jenis Surat
-    table.column(3).format().width(11); // Keperluan
-    table.column(4).format().width(8); // Status
-    table.column(5).format().width(20); // Keterangan
-    cout << table << "\n";
-    string opsiUbahSurat[] = {"Ubah status", "Ubah keterangan", "Kembali"};
-    int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahSurat, 3);
-    switch(pilihan) {
-        case 1: {
-            int pilihStatus = tampilMenu("Pilih status\n", daftarStatus, 4); // Tolong dicek lagi
-            data[cariIndex].status = daftarStatus[pilihStatus-1];
-            cout << "Status berhasil diganti!\n";
-            break;
+    try {
+        string cariID;
+        cout << "Masukkan ID surat dari surat yang ingin diubah:";
+        getline(cin, cariID);
+        int cariIndex = linearSearch(data, jumlah, cariID, 3);
+        if (cariIndex == -1) {
+            throw out_of_range("Surat tidak ditemukan!");
         }
-        case 2: {
-            cin.ignore();
-            string isiKeterangan = inputOpsional("Isi keterangan surat (kosongkan untuk '-'): ", 50);
-            if (isiKeterangan == "") {
-                data[cariIndex].keterangan = "-";
-                cout << "Keterangan dikosongkan\n";
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
+            "Keperluan", "Status", "Keterangan"});
+        table.add_row({
+            data[cariIndex].idSurat,
+            data[cariIndex].nikPemohon,
+            data[cariIndex].jenisSurat,
+            data[cariIndex].keperluan,
+            data[cariIndex].status,
+            data[cariIndex].keterangan
+        });
+        table.column(0).format().width(6); // ID Surat
+        table.column(1).format().width(6); // NIK Pemohon
+        table.column(2).format().width(17); // Jenis Surat
+        table.column(3).format().width(11); // Keperluan
+        table.column(4).format().width(8); // Status
+        table.column(5).format().width(20); // Keterangan
+        cout << table << "\n";
+        string opsiUbahSurat[] = {"Ubah status", "Ubah keterangan", "Kembali"};
+        int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahSurat, 3);
+        switch(pilihan) {
+            case 1: {
+                int pilihStatus = tampilMenu("Pilih status\n", daftarStatus, 4); // Tolong dicek lagi
+                data[cariIndex].status = daftarStatus[pilihStatus-1];
+                cout << "Status berhasil diganti!\n";
                 break;
             }
-            data[cariIndex].keterangan = isiKeterangan;
-            cout << "Keterangan berhasil diubah!\n";
-            break;
+            case 2: {
+                cin.ignore();
+                string isiKeterangan = inputOpsional("Isi keterangan surat (kosongkan untuk '-'): ", 50);
+                if (isiKeterangan == "") {
+                    data[cariIndex].keterangan = "-";
+                    cout << "Keterangan dikosongkan\n";
+                    break;
+                }
+                data[cariIndex].keterangan = isiKeterangan;
+                cout << "Keterangan berhasil diubah!\n";
+                break;
+            }
+            case 3: {
+                break;
+            }
         }
-        case 3: {
-            break;
-        }
+    } catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n"; 
     }
 }
 
 void hapusSuratAdmin(Surat data[], int &jumlah) {
-    string cariID;
-    cout << "Masukkan ID surat dari surat yang ingin diubah:";
-    getline(cin, cariID);
-    int cariIndex = linearSearch(data, jumlah, cariID, 3);
-    if (cariIndex == -1) {
-        cout << "Surat tidak ditemukan!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
-        "Keperluan", "Status", "Keterangan"});
-    table.add_row({
-        data[cariIndex].idSurat,
-        data[cariIndex].nikPemohon,
-        data[cariIndex].jenisSurat,
-        data[cariIndex].keperluan,
-        data[cariIndex].status,
-        data[cariIndex].keterangan
-    });
-    table.column(0).format().width(6); // ID Surat
-    table.column(1).format().width(6); // NIK Pemohon
-    table.column(2).format().width(17); // Jenis Surat
-    table.column(3).format().width(11); // Keperluan
-    table.column(4).format().width(8); // Status
-    table.column(5).format().width(20); // Keterangan
-    cout << table << "\n";
-    if(!konfirmasi("Yakin ingin hapus?")) {
-        cout << "Batal hapus!\n";
-        return;
-    }
+    try {
+        string cariID;
+        cout << "Masukkan ID surat dari surat yang ingin diubah:";
+        getline(cin, cariID);
+        int cariIndex = linearSearch(data, jumlah, cariID, 3);
+        if (cariIndex == -1) {
+            throw out_of_range("Surat tidak ditemukan!");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
+            "Keperluan", "Status", "Keterangan"});
+        table.add_row({
+            data[cariIndex].idSurat,
+            data[cariIndex].nikPemohon,
+            data[cariIndex].jenisSurat,
+            data[cariIndex].keperluan,
+            data[cariIndex].status,
+            data[cariIndex].keterangan
+        });
+        table.column(0).format().width(6); // ID Surat
+        table.column(1).format().width(6); // NIK Pemohon
+        table.column(2).format().width(17); // Jenis Surat
+        table.column(3).format().width(11); // Keperluan
+        table.column(4).format().width(8); // Status
+        table.column(5).format().width(20); // Keterangan
+        cout << table << "\n";
+        if(!konfirmasi("Yakin ingin hapus?")) {
+            cout << "Batal hapus!\n";
+            return;
+        }
 
-    hapus(data, jumlah,cariIndex);
-    cout << "Berhasil dihapus!\n";
+        hapus(data, jumlah,cariIndex);
+        cout << "Berhasil dihapus!\n";
+    } catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n"; 
+    }
 }
 
 void gantiPassword(User data[], int indexUser) {
-    string passwordTempo = inputStr("Masukkan password sekarang untuk mengganti password");
-    if (data[indexUser].pw == passwordTempo) {
+    try {
+        string passwordTempo = inputStr("Masukkan password sekarang: ");
+        if (data[indexUser].pw != passwordTempo)
+            throw invalid_argument("Password saat ini salah!");
+
         string passwordGanti = inputMin("Masukkan password baru: ", 3);
-        string konfirmasi = inputStr("Konfirmasi password baru: ");
-        if (passwordGanti == konfirmasi) {
-            data[indexUser].pw = passwordGanti;
-            cout << "Password berhasil diubah!\n"; 
-            return;
-        } else {
-            cout << "Password salah!\n";
-        }
-    } else {
-        cout << "Password salah!\n";
+        string konfirmasiPw = inputStr("Konfirmasi password baru: ");
+        if (passwordGanti != konfirmasiPw)
+            throw invalid_argument("Konfirmasi password tidak cocok!");
+
+        data[indexUser].pw = passwordGanti;
+        cout << "Password berhasil diubah!\n";
+
+    } catch (invalid_argument& e) {
+        cout << "[INPUT TIDAK VALID] " << e.what() << "\n";
     }
 }
 
@@ -782,97 +782,105 @@ bool statusMenunggu(Surat data[], int index) {
 }
 
 void editSuratUser(Surat dataSurat[], int jumlahSurat, int indexUser, User dataUser[]) {
-    string cariID;
-    cout << "Masukkan ID surat dari surat yang ingin diubah: ";
-    getline(cin, cariID);
-    int cariIndex = cariSuratUser(dataSurat, jumlahSurat, cariID, dataUser[indexUser].dataDiri.nik);
-    if (cariIndex == -1) {
-        cout << "Surat tidak ditemukan!\n";
-        return;
+    try {
+        string cariID;
+        cout << "Masukkan ID surat dari surat yang ingin diubah: ";
+        getline(cin, cariID);
+        int cariIndex = cariSuratUser(dataSurat, jumlahSurat, cariID, dataUser[indexUser].dataDiri.nik);
+        if (cariIndex == -1) {
+            throw out_of_range("Surat tidak ditemukan!");
+        }
+        if (!statusMenunggu(dataSurat, cariIndex)) {
+            throw logic_error("Surat sudah diproses, tidak bisa diedit!");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
+            "Keperluan", "Status", "Keterangan"});
+        table.add_row({
+            dataSurat[cariIndex].idSurat,
+            dataSurat[cariIndex].nikPemohon,
+            dataSurat[cariIndex].jenisSurat,
+            dataSurat[cariIndex].keperluan,
+            dataSurat[cariIndex].status,
+            dataSurat[cariIndex].keterangan
+        });
+        table.column(0).format().width(6); // ID Surat
+        table.column(1).format().width(6); // NIK Pemohon
+        table.column(2).format().width(17); // Jenis Surat
+        table.column(3).format().width(11); // Keperluan
+        table.column(4).format().width(8); // Status
+        table.column(5).format().width(20); // Keterangan
+        cout << table << "\n";
+        string opsiUbahSurat[] = {"Jenis surat", "Keperluan surat", "Kembali"};
+        int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahSurat, 3);
+        switch(pilihan) {
+            case 1: {
+                int pilihJenis = tampilMenu("Pilih jenis\n", daftarJenis, 4);
+                dataSurat[cariIndex].jenisSurat = daftarJenis[pilihJenis-1];
+                cout << "Berhasil diubah!\n";
+                break;
+            }
+            case 2: {
+                int pilihKeperluan = tampilMenu("Pilih kepeluan", daftarKeperluan, 4);
+                dataSurat[cariIndex].keperluan = daftarKeperluan[pilihKeperluan-1];
+                cout << "Berhasil diubah!\n";
+                break;
+            }
+            case 3: {
+                break;
+            }
+        }     
+    } catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+    } catch (logic_error& e) {
+        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
     }
-    if (!statusMenunggu(dataSurat, cariIndex)) {
-        cout << "Surat tidak bisa diedit/dihapus!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
-        "Keperluan", "Status", "Keterangan"});
-    table.add_row({
-        dataSurat[cariIndex].idSurat,
-        dataSurat[cariIndex].nikPemohon,
-        dataSurat[cariIndex].jenisSurat,
-        dataSurat[cariIndex].keperluan,
-        dataSurat[cariIndex].status,
-        dataSurat[cariIndex].keterangan
-    });
-    table.column(0).format().width(6); // ID Surat
-    table.column(1).format().width(6); // NIK Pemohon
-    table.column(2).format().width(17); // Jenis Surat
-    table.column(3).format().width(11); // Keperluan
-    table.column(4).format().width(8); // Status
-    table.column(5).format().width(20); // Keterangan
-    cout << table << "\n";
-    string opsiUbahSurat[] = {"Jenis surat", "Keperluan surat", "Kembali"};
-    int pilihan = tampilMenu("Pilih perubahan\n", opsiUbahSurat, 3);
-    switch(pilihan) {
-        case 1: {
-            int pilihJenis = tampilMenu("Pilih jenis\n", daftarJenis, 4);
-            dataSurat[cariIndex].jenisSurat = daftarJenis[pilihJenis-1];
-            cout << "Berhasil diubah!\n";
-            break;
-        }
-        case 2: {
-            int pilihKeperluan = tampilMenu("Pilih kepeluan", daftarKeperluan, 4);
-            dataSurat[cariIndex].keperluan = daftarKeperluan[pilihKeperluan-1];
-            cout << "Berhasil diubah!\n";
-            break;
-        }
-        case 3: {
-            break;
-        }
-    }     
 }
 
 void hapusSuratUser(Surat dataSurat[], int &jumlahSurat, int indexUser, User dataUser[]) {
-    string cariID;
-    cout << "Masukkan ID surat dari surat yang ingin diubah: ";
-    getline(cin, cariID);
-    int cariIndex = cariSuratUser(dataSurat, jumlahSurat, cariID, dataUser[indexUser].dataDiri.nik);
-    if (cariIndex == -1) {
-        cout << "Surat tidak ditemukan!\n";
-        return;
-    }
-    if (!statusMenunggu(dataSurat, cariIndex)) {
-        cout << "Surat tidak bisa diedit/dihapus!\n";
-        return;
-    }
-    cout << "Data ditemukan: \n";
-    Table table;
-    table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
-        "Keperluan", "Status", "Keterangan"});
-    table.add_row({
-        dataSurat[cariIndex].idSurat,
-        dataSurat[cariIndex].nikPemohon,
-        dataSurat[cariIndex].jenisSurat,
-        dataSurat[cariIndex].keperluan,
-        dataSurat[cariIndex].status,
-        dataSurat[cariIndex].keterangan
-    });
-    table.column(0).format().width(6); // ID Surat
-    table.column(1).format().width(6); // NIK Pemohon
-    table.column(2).format().width(17); // Jenis Surat
-    table.column(3).format().width(11); // Keperluan
-    table.column(4).format().width(8); // Status
-    table.column(5).format().width(20); // Keterangan
-    cout << table << "\n";
-    if(!konfirmasi("Yakin ingin hapus?")) {
-        cout << "Batal hapus!\n";
-        return;
-    }
+    try {
+        string cariID;
+        cout << "Masukkan ID surat dari surat yang ingin diubah: ";
+        getline(cin, cariID);
+        int cariIndex = cariSuratUser(dataSurat, jumlahSurat, cariID, dataUser[indexUser].dataDiri.nik);
+        if (cariIndex == -1) {
+            throw out_of_range("Surat tidak ditemukan!");
+        }
+        if (!statusMenunggu(dataSurat, cariIndex)) {
+            throw logic_error("Surat sudah diproses, tidak bisa diedit!");
+        }
+        cout << "Data ditemukan: \n";
+        Table table;
+        table.add_row({"ID Surat", "NIK Pemohon", "Jenis Surat", 
+            "Keperluan", "Status", "Keterangan"});
+        table.add_row({
+            dataSurat[cariIndex].idSurat,
+            dataSurat[cariIndex].nikPemohon,
+            dataSurat[cariIndex].jenisSurat,
+            dataSurat[cariIndex].keperluan,
+            dataSurat[cariIndex].status,
+            dataSurat[cariIndex].keterangan
+            });
+            table.column(0).format().width(6); // ID Surat
+            table.column(1).format().width(6); // NIK Pemohon
+            table.column(2).format().width(17); // Jenis Surat
+            table.column(3).format().width(11); // Keperluan
+            table.column(4).format().width(8); // Status
+            table.column(5).format().width(20); // Keterangan
+            cout << table << "\n";
+            if(!konfirmasi("Yakin ingin hapus?")) {
+                cout << "Batal hapus!\n";
+                return;
+            }
 
-    hapus(dataSurat, jumlahSurat, cariIndex);
-    cout << "Berhasil dihapus!\n";
+            hapus(dataSurat, jumlahSurat, cariIndex);
+            cout << "Berhasil dihapus!\n";
+    }  catch (out_of_range& e) {
+        cout << "[TIDAK DITEMUKAN]" << e.what() << "\n";
+    } catch (logic_error& e) {
+        cout << "[PERMINTAAN DITOLAK]" << e.what() << "\n";
+    }
 }
 
 void bubbleSortNamaPenduduk(Penduduk* arr, int n) {
